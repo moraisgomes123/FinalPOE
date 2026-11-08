@@ -619,51 +619,362 @@ xUnit.net (n.d.) Getting started with xUnit.net. Available at: https://xunit.net
 OpenAPI Initiative (n.d.) OpenAPI Specification. Available at: https://spec.openapis.org/oas/latest.html (Accessed: 16 October 2026).
 
 
-# RaceDay Part 3 – MVC, Azure Blob Storage and Docker
+# RaceDay Part 3 – ASP.NET Core MVC Application
 
-## Projects
-- `RaceDay.Api`: REST API and Azure Blob Storage integration.
-- `RaceDay.Mvc`: ASP.NET Core MVC frontend. It communicates with the API using `HttpClient`; it does not access SQL Server or Azure directly.
-- `RaceDay.Tests`: Part 2 automated tests.
+## 1. Project Overview
 
-## Configuration
-Set the MVC API address using `ApiSettings__BaseUrl` (for local development, for example `https://localhost:7271/`). Set the API database connection using `ConnectionStrings__RaceDayConnection`, JWT settings using `Jwt__Key`, `Jwt__Issuer`, `Jwt__Audience`, and Azure using `AzureBlobStorage__ConnectionString`. Never commit real secrets. Use .NET User Secrets locally or environment variables in deployment.
+RaceDay is a web-based event management system developed using ASP.NET Core. Part 3 extends the Part 2 REST API by introducing an ASP.NET Core MVC frontend.
 
-Azure Blob containers are private. The API uploads JPG, PNG and WEBP files up to 5 MB and stores the returned blob URL on the relevant user/event. Configure a suitable read strategy (private SAS URLs or authenticated image proxy) before production use; the current MVC markup assumes browser-readable URLs.
+The application allows two types of users, Organisers and Participants, to interact with running and cycling events through a responsive web interface.
 
-## Database update required
-Part 3 adds nullable `BannerUrl` to `Events` and nullable `ProfilePictureUrl` to `Users`. Create and apply an EF Core migration from the API project before running against an existing database:
+The MVC application communicates with the existing RaceDay API using HTTP requests. Authentication is managed using JWT tokens stored in the MVC session.
 
-```bash
-dotnet ef migrations add AddAzureImageUrls --project RaceDay.Api
-dotnet ef database update --project RaceDay.Api
+## 2. Main Objectives
+
+The main objectives of RaceDay Part 3 are to:
+
+- Develop an ASP.NET Core MVC frontend.
+- Integrate the MVC application with the Part 2 REST API.
+- Implement role-based authentication and authorisation.
+- Provide separate interfaces for Organisers and Participants.
+- Support event management and participant enrolments.
+- Support result management and publication.
+- Integrate Azure Blob Storage for image uploads.
+- Containerise the MVC application using Docker.
+- Provide a responsive and user-friendly interface.
+
+## 3. Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| C# | Main programming language |
+| ASP.NET Core MVC | Frontend web application |
+| ASP.NET Core Web API | Backend services |
+| Entity Framework Core | Database access in the API |
+| SQL Server | Database management |
+| JWT | User authentication |
+| HTTP Client | MVC and API communication |
+| Bootstrap | Responsive interface |
+| Azure Blob Storage | Image storage |
+| Docker | Application containerisation |
+| Swagger | API testing |
+| GitHub | Source code management and version control |
+
+## 4. System Architecture
+
+The system follows a client-server architecture.
+
+The MVC application communicates with the REST API. The API handles business logic, authentication, authorisation and database operations.
+
+Azure Blob Storage is used by the API to store uploaded images.
+
+**System flow:**
+
+1. The user accesses the MVC application.
+2. The user registers or logs in.
+3. MVC sends authentication requests to the API.
+4. The API validates credentials and returns a JWT token.
+5. MVC stores the token in the session.
+6. The user accesses the appropriate dashboard according to their role.
+7. MVC sends authorised requests to the API.
+8. The API communicates with SQL Server and Azure Blob Storage when required.
+
+## 5. User Roles and Features
+
+### 5.1 Organiser
+
+Organisers are responsible for managing events.
+
+The Organiser interface provides functionality for:
+
+- Viewing the Organiser Dashboard.
+- Creating running and cycling events.
+- Uploading event banner images.
+- Managing event categories.
+- Viewing participant enrolments.
+- Managing event results.
+- Publishing results.
+
+### 5.2 Participant
+
+Participants can interact with available events.
+
+The Participant interface provides functionality for:
+
+- Viewing the Participant Dashboard.
+- Browsing available events.
+- Viewing event details.
+- Enrolling in events.
+- Viewing personal enrolments.
+- Checking enrolment status.
+- Viewing published results.
+- Updating profile information.
+- Uploading a profile picture.
+
+## 6. Authentication and Authorisation
+
+The application uses JWT authentication through the Part 2 API.
+
+When a user logs in:
+
+1. MVC sends the email and password to the API.
+2. The API validates the credentials.
+3. The API returns a JWT token and user information.
+4. MVC stores the token, user ID and role in the session.
+5. The application redirects the user to the appropriate dashboard.
+
+Role-based access control separates Organiser and Participant functionality.
+
+Unauthorised users cannot access protected dashboard areas. The API also enforces its own authorisation rules.
+
+## 7. Azure Blob Storage
+
+Azure Blob Storage is integrated through the API.
+
+It is used for storing:
+
+- Event banner images.
+- Participant profile pictures.
+
+The MVC application sends image uploads to the API using multipart/form-data. The API validates the uploaded files and communicates with Azure Blob Storage.
+
+### Configuration
+
+The Azure connection string must be stored securely using .NET User Secrets.
+
+From the `RaceDay.Api` directory, run:
+
+```powershell
+dotnet user-secrets init
 ```
 
-## Run locally
-Start the API first, then start the MVC project. Configure `ApiSettings:BaseUrl` to match the API HTTPS/HTTP launch URL.
+If User Secrets has already been initialised, skip that command.
 
-```bash
-dotnet run --project RaceDay.Api
-dotnet run --project RaceDay.Mvc
+Configure the connection string:
+
+```powershell
+dotnet user-secrets set "AzureBlobStorage:ConnectionString" "YOUR_CONNECTION_STRING"
 ```
 
-## Docker (MVC)
-Build the MVC image from the repository root:
+Do not commit connection strings, account keys or other secrets to GitHub.
+
+The Blob containers should remain private. The API must provide an appropriate secure way to display stored images, such as short-lived read-only SAS URLs or an authenticated image endpoint.
+
+## 8. Project Structure
+
+```text
+RaceDayPart3/
+│
+├── RaceDay.Api/
+│   ├── Controllers/
+│   ├── Data/
+│   ├── DTOs/
+│   ├── Models/
+│   ├── Services/
+│   ├── Program.cs
+│   └── appsettings.json
+│
+├── RaceDay.Mvc/
+│   ├── Controllers/
+│   │   ├── AccountController.cs
+│   │   ├── HomeController.cs
+│   │   ├── OrganiserController.cs
+│   │   └── ParticipantController.cs
+│   │
+│   ├── Models/
+│   ├── Services/
+│   │   └── RaceDayApiClient.cs
+│   │
+│   ├── Views/
+│   │   ├── Account/
+│   │   ├── Home/
+│   │   ├── Organiser/
+│   │   ├── Participant/
+│   │   └── Shared/
+│   │
+│   ├── wwwroot/
+│   ├── Dockerfile
+│   ├── Program.cs
+│   └── appsettings.json
+│
+├── RaceDay.Tests/
+│
+├── RaceDay.Api.slnx
+└── README.md
+```
+
+## 9. Running the Application Locally
+
+### Prerequisites
+
+Install the following:
+
+- .NET 10 SDK.
+- SQL Server.
+- Visual Studio.
+- Docker Desktop (for container testing).
+
+### Step 1: Clone the repository
 
 ```bash
+git clone https://github.com/moraisgomes123/RaceDayPart2.git
+```
+
+Open the solution in Visual Studio.
+
+### Step 2: Configure the database
+
+Ensure that SQL Server is running and that the `RaceDayDB` database is configured.
+
+Check the connection string in the API configuration.
+
+### Step 3: Start the API
+
+Navigate to the API directory:
+
+```powershell
+cd RaceDay.Api
+dotnet run
+```
+
+The local API address used by this project is:
+
+```text
+http://localhost:5148
+```
+
+Swagger can be accessed at:
+
+```text
+http://localhost:5148/swagger
+```
+
+### Step 4: Start the MVC application
+
+Open a second terminal:
+
+```powershell
+cd RaceDay.Mvc
+dotnet run
+```
+
+The MVC application runs using the configured ASP.NET Core development launch profile.
+
+Make sure the API BaseUrl in `RaceDay.Mvc/appsettings.json` points to the running API.
+
+## 10. Docker Configuration
+
+The MVC application includes a multi-stage Dockerfile.
+
+The first stage builds and publishes the application using the .NET SDK image.
+
+The second stage uses the ASP.NET Core runtime image to run the published application.
+
+### Build the Docker image
+
+From the solution root directory:
+
+```powershell
 docker build -f RaceDay.Mvc/Dockerfile -t raceday-mvc ./RaceDay.Mvc
 ```
 
-Run it (replace the API URL with an address reachable from the container):
+### Run the Docker container
 
-```bash
+Make sure the API is running on port 5148.
+
+Then execute:
+
+```powershell
 docker run --rm -p 8080:8080 -e ApiSettings__BaseUrl=http://host.docker.internal:5148/ --name raceday-web raceday-mvc
 ```
 
-The MVC container must be able to reach the API. On Docker Desktop, `host.docker.internal` can reach a host service. For a multi-container deployment, use the API service name on the Docker network instead.
+### Access the application
 
-## Known implementation work to finish and verify
-The initial Part 3 scaffold adds session login/logout, role navigation, public event browsing, participant event enrolment/profile/results pages, organiser dashboard/event/category pages, image upload plumbing and an MVC Dockerfile. The existing Part 2 API does not yet expose an organiser enrolment-list endpoint, complete result-entry workflow, route creation through the MVC form, edit/delete event MVC forms, or an organiser provisioning workflow. Those are explicit follow-on tasks; do not treat the pages as fully complete until those endpoints and forms are implemented and tested.
+Open the browser:
 
-## CI
-GitHub Actions workflow `raceday-ci.yml` restores, builds and tests the full `.slnx`, including the MVC project.
+```text
+http://localhost:8080
+```
+
+The MVC application communicates with the API running on the host machine.
+
+### Stop the container
+
+Press:
+
+```text
+CTRL + C
+```
+
+The `--rm` option automatically removes the stopped container.
+
+## 11. Testing
+
+The application should be tested locally and inside Docker.
+
+Important testing scenarios include:
+
+- User registration.
+- Valid and invalid login attempts.
+- Participant dashboard access.
+- Organiser dashboard access.
+- Role-based access restrictions.
+- Event creation.
+- Image upload.
+- Category management.
+- Participant enrolment.
+- Results management and publication.
+- Profile management.
+- API communication.
+- Docker container startup and operation.
+
+Run automated tests from the solution root:
+
+```powershell
+dotnet test RaceDay.Api.slnx
+```
+
+The Docker build and container must also be tested independently.
+
+## 12. Security Considerations
+
+The application uses several security measures:
+
+- JWT-based authentication.
+- Role-based authorisation.
+- Session-based authentication in MVC.
+- Protected API endpoints.
+- Server-side validation.
+- Restricted image upload types and file sizes.
+- Secure storage of Azure credentials through User Secrets.
+
+Secrets should never be committed to the public repository.
+
+## 13. GitHub Repository
+
+Source code:
+
+https://github.com/moraisgomes123/RaceDayPart2
+
+The repository contains the API, MVC application and automated tests.
+
+Ensure the final Part 3 files, commits and documentation are pushed to the required repository location.
+
+## 14. Conclusion
+
+RaceDay Part 3 extends the existing REST API by providing a web-based MVC interface for Organisers and Participants.
+
+The project combines ASP.NET Core MVC, REST API integration, SQL Server, JWT authentication, Azure Blob Storage and Docker containerisation.
+
+The result is a structured event management application that supports event administration, participant interaction and result management.
+
+## 15. Future Improvements
+
+Possible improvements include:
+
+- Enhanced reporting and analytics.
+- Email notifications for enrolment updates.
+- Improved image delivery through secure temporary URLs.
+- Additional dashboard statistics.
+- Deployment to a cloud hosting environment.
+
