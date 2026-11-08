@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Upcoming events";
+    var events = ViewBag.Events as List<ApiEvent> ?? new();
+}
+
+<section class="hero mb-5">
+    <div class="eyebrow">Find your next challenge</div>
+    <h1 class="display-4 mt-2">
+        Make every kilometre<br />
+        count.
+    </h1>
+    <p class="lead mt-3">
+        Discover races, set your goal and cross your next finish line.
+    </p>
+    <a class="btn btn-warning btn-lg fw-bold mt-2"
+       asp-controller="Account"
+       asp-action="Register">
+        Get started
+    </a>
+</section>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <div class="eyebrow">The race calendar</div>
+        <h2 class="page-heading">Upcoming events</h2>
+    </div>
+    <a asp-controller="Account" asp-action="Login">Already a member? Sign in</a>
+</div>
+
+<div class="row g-4">
+    @foreach (var e in events)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(e.BannerUrl))
+                {
+                    <img class="event-image" src="@e.BannerUrl" alt="Event banner" />
+                }
+                <div class="card-body">
+                    <span class="badge text-bg-dark">@e.EventType</span>
+                    <h5 class="mt-2 fw-bold">@e.EventName</h5>
+                    <p class="text-secondary mb-1">
+                        📅 @e.EventDate.ToString("dd MMM yyyy") · @e.Location
+                    </p>
+                    <p>@e.Description</p>
+                    <a class="btn btn-dark"
+                       asp-controller="Account"
+                       asp-action="Login">
+                        View event
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

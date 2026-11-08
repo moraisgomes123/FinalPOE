@@ -1,0 +1,68 @@
+@model EventViewModel
+@{
+    ViewData["Title"] = "Create event";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card p-4">
+            <h1 class="page-heading">Create a race event</h1>
+
+            <form method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="EventName" class="form-label">Event name</label>
+                    <input asp-for="EventName" class="form-control" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EventType" class="form-label"></label>
+                        <select asp-for="EventType" class="form-select">
+                            <option>Running</option>
+                            <option>Walking</option>
+                            <option>Cycling</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EventDate" class="form-label">Date</label>
+                        <input asp-for="EventDate" type="date" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StartTime" class="form-label">Start time</label>
+                    <input asp-for="StartTime" type="time" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Location" class="form-label"></label>
+                    <input asp-for="Location" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DistanceKm" class="form-label">Distance (km)</label>
+                    <input asp-for="DistanceKm" class="form-control" type="number" step="0.01" min="0.01" />
+                    <div class="form-text">
+                        The distance is stored as a Route record in the existing API.
+                        Route creation is a separate step in this starter.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BannerImage" class="form-label">Event banner image</label>
+                    <input asp-for="BannerImage" type="file" accept="image/*" class="form-control" />
+                </div>
+
+                <button class="btn btn-warning fw-bold">Save event</button>
+            </form>
+        </div>
+    </div>
+</div>

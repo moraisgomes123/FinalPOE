@@ -1,0 +1,40 @@
+@model List<ApiEvent>
+@{
+    ViewData["Title"] = "Find an event";
+}
+
+<div class="eyebrow">Participant area</div>
+<h1 class="page-heading mb-4">Find your next event</h1>
+
+<div class="row g-4">
+    @foreach (var e in Model)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100">
+                @if (!string.IsNullOrEmpty(e.BannerUrl))
+                {
+                    <img class="event-image"
+                         src="@e.BannerUrl"
+                         alt="Event banner" />
+                }
+
+                <div class="card-body">
+                    <span class="badge text-bg-dark">@e.EventType</span>
+                    <h5 class="fw-bold mt-2">@e.EventName</h5>
+
+                    <p class="text-secondary">
+                        @e.EventDate.ToString("dd MMM yyyy") · @e.Location
+                    </p>
+
+                    <p>@e.Description</p>
+
+                    <a class="btn btn-dark"
+                       asp-action="Event"
+                       asp-route-id="@e.EventID">
+                        Event details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,55 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card p-4">
+            <h1 class="page-heading">My profile</h1>
+
+            <form method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Phone" class="form-label"></label>
+                    <input asp-for="Phone" class="form-control" />
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                {
+                    <img src="@Model.ProfilePictureUrl"
+                         alt="Profile picture"
+                         width="100"
+                         height="100"
+                         class="rounded-circle mb-3" />
+                }
+
+                <div class="mb-3">
+                    <label asp-for="ProfilePicture" class="form-label">Profile picture</label>
+                    <input asp-for="ProfilePicture"
+                           type="file"
+                           accept="image/*"
+                           class="form-control" />
+                </div>
+
+                <button class="btn btn-warning">Save profile</button>
+            </form>
+        </div>
+    </div>
+</div>

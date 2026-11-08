@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "My results";
+    var items = ViewBag.Items as List<ApiResult> ?? new();
+}
+
+<h1 class="page-heading">My race results</h1>
+
+<div class="card p-3 mt-4">
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Finish time</th>
+                    <th>Position</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in items)
+                {
+                    <tr>
+                        <td>@r.EventName</td>
+                        <td>@(r.FinishTime?.ToString() ?? "—")</td>
+                        <td>@(r.FinishPosition?.ToString() ?? "—")</td>
+                        <td>@r.ResultStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (items.Count == 0)
+    {
+        <p class="text-secondary">
+            Your published results will appear here after the organiser records them.
+        </p>
+    }
+</div>

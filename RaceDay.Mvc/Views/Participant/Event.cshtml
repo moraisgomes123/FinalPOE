@@ -1,0 +1,49 @@
+@model ApiEvent
+@{
+    ViewData["Title"] = Model.EventName;
+    var cats = ViewBag.Categories as List<ApiCategory> ?? new();
+}
+
+<div class="card overflow-hidden">
+    @if (!string.IsNullOrEmpty(Model.BannerUrl))
+    {
+        <img src="@Model.BannerUrl"
+             class="w-100"
+             style="max-height:360px;object-fit:cover"
+             alt="Event banner" />
+    }
+
+    <div class="card-body p-4">
+        <span class="badge text-bg-dark">@Model.EventType</span>
+        <h1 class="page-heading mt-2">@Model.EventName</h1>
+
+        <p class="text-secondary">
+            @Model.EventDate.ToString("dddd, dd MMMM yyyy") ·
+            @Model.StartTime ·
+            @Model.Location
+        </p>
+
+        <p>@Model.Description</p>
+
+        <h4 class="mt-4">Choose your category</h4>
+
+        @foreach (var c in cats)
+        {
+            <form asp-action="Enrol"
+                  asp-route-id="@Model.EventID"
+                  method="post"
+                  class="border rounded-3 p-3 my-2 d-flex justify-content-between align-items-center">
+                <input type="hidden" name="categoryId" value="@c.CategoryID" />
+
+                <div>
+                    <strong>@c.CategoryName</strong>
+                    <div class="text-secondary small">
+                        @c.DistanceKm km · Entry fee R @c.EntryFee
+                    </div>
+                </div>
+
+                <button class="btn btn-warning">Enter event</button>
+            </form>
+        }
+    </div>
+</div>

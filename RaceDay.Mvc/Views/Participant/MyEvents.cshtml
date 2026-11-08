@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "My events";
+    var items = ViewBag.Items as List<System.Text.Json.JsonElement> ?? new();
+}
+
+<h1 class="page-heading">My events</h1>
+
+<div class="card p-3 mt-4">
+    <p class="text-secondary">Your event registrations and current status.</p>
+
+    @if (items.Count == 0)
+    {
+        <p>No enrolments found yet.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in items)
+                    {
+                        <tr>
+                            <td>
+                                @(x.TryGetProperty("eventName", out var n) ? n.ToString() : "Event")
+                            </td>
+                            <td>
+                                @(x.TryGetProperty("categoryName", out var c) ? c.ToString() : "-")
+                            </td>
+                            <td>
+                                <span class="badge status-confirmed">
+                                    @(x.TryGetProperty("status", out var s) ? s.ToString() : "-")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
