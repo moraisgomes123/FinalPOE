@@ -949,6 +949,10 @@ Possible improvements include:
 - Additional dashboard statistics.
 - Deployment to a cloud hosting environment.
 
+- ## ScreenShot CI/CD
+  <img width="941" height="490" alt="image" src="https://github.com/user-attachments/assets/5f4f940a-41ad-400b-bfa6-f6e6828ed39f" />
+
+
 - ## References
 
 Microsoft (2026) *Tutorial: Create a controller-based web API with ASP.NET Core*. Microsoft Learn. Available at: https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-10.0 (Accessed: 16 October 2026).
