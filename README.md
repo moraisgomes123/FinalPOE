@@ -1,4 +1,4 @@
-# RaceDay Part 2 – Event Management REST API
+# RaceDay POE– Event Management REST API
 
 ## 1. Project Overview
 
