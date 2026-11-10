@@ -468,7 +468,7 @@ The build and tests must complete successfully before the results are considered
 The workflow file is located at:
 
 ```text
-.github/workflows/part2.yml
+.github/workflows/part2.ym
 ```
 
 The workflow is configured to run when changes are pushed to the configured branches or when a pull request targets them. It can also be started manually through GitHub Actions.
@@ -727,7 +727,6 @@ Configure the connection string:
 dotnet user-secrets set "AzureBlobStorage:ConnectionString" "YOUR_CONNECTION_STRING"
 ```
 
-Do not commit connection strings, account keys or other secrets to GitHub.
 
 The Blob containers should remain private. The API must provide an appropriate secure way to display stored images, such as short-lived read-only SAS URLs or an authenticated image endpoint.
 
@@ -925,7 +924,7 @@ Secrets should never be committed to the public repository.
 
 Source code:
 
-https://github.com/moraisgomes123/RaceDayPart2
+https://github.com/moraisgomes123/FinalPOE
 
 The repository contains the API, MVC application and automated tests.
 
