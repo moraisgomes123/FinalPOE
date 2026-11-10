@@ -1,5 +1,5 @@
 
-name: RaceDay Part 2 CI
+name: RaceDay POE CI
 
 on:
   push:
